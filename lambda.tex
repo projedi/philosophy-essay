@@ -39,6 +39,44 @@
 
 \subsection{Просто типизированное лямбда-исчисление}
 
-\subsection{Другие способы типизирования. Куб Барендрегта}
+Недостаток нетипизированного лямбда-исчисления лежит во <<вседозволенности>>
+операции применения \(M N\): ничто не гарантирует, что \(M\) будет функцией.
+Чтобы решить эту проблему, Чёрч разработал просто типизированное лямбда-исчисление
+\cite{lambda-calculi-with-types}:
+\begin{itemize}
+\item Множество переменных на уровне термов \(V\) и на уровне типов \(TyV\).
+\item Множество типов \(Ty\):
+   \[
+   Ty = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in TyV\\
+   \sigma \rightarrow \tau,\quad& \sigma, \tau \in Ty
+   \end{array}
+   \right.
+   \]
+\item Множество термов \(T\):
+   \[
+   T = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in V\\
+   M\ N,\quad& M, N \in T\\
+   \lambda x : \sigma. M,\quad& x \in V, \sigma \in Ty, M \in T
+   \end{array}
+   \right.
+   \]
+\item Правила присваивания типов:
+   \begin{align*}
+   &\Gamma \vdash x : \sigma,\quad (x : \sigma) \in \Gamma\\
+   &\Gamma \vdash M N : \sigma,\quad \Gamma \vdash M : \tau \rightarrow \sigma,
+      \Gamma \vdash N : \tau\\
+   &\Gamma \vdash (\lambda x : \sigma. M) : \sigma \rightarrow \tau,\quad
+      (\Gamma \cup (x : \sigma)) \vdash M : \tau
+   \end{align*}
+\item Вычисление выполняется также с помощью бэта-редукции, имеющему
+   аналогичный вид нетипизированному случаю. Но определяется только
+   для термов, которым можно присвоить тип.
+\end{itemize}
+
+\subsection{Другие способы типизирования}
 
 \subsection{Зависимые типы}
