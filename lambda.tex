@@ -79,4 +79,43 @@
 
 \subsection{Другие способы типизирования}
 
+Недостаток просто типизированного лямбда-исчисления обратный: множество термов,
+которые хотелось бы написать будут отвергнуты системой типов. Поэтому было придумано
+множество способов расширить систему типов, чтобы с одной стороны позволить писать
+больше программ, которые хочется, а с другой --- отвергать некорректные. Одной из
+таких систем типов является System F Жирара\cite{tapl}:
+\begin{itemize}
+\item Типы
+   \[
+   Ty = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in TyV\\
+   \sigma \rightarrow \tau,\quad& \sigma \in Ty, \tau \in Ty\\
+   \forall x. \sigma,\quad& x \in TyV, \sigma \in Ty
+   \end{array}
+   \right.
+   \]
+\item Термы
+   \[
+   T = \left\{
+   \begin{array}{lrr}
+   x,\quad& x \in V&\\
+   M\ N,\quad& M, N \in T&\\
+   \lambda x : \sigma. M,\quad& x \in V, \sigma \in Ty, M \in T&\\
+   \Lambda x. M,\quad& X \in TyV, M \in T\quad&\text{абстракция по типу}\\
+   M [\sigma],\quad& M \in T, \sigma \in Ty\quad&\text{применение типа}
+   \end{array}
+   \right.
+   \]
+\item Типизация. Все правила из просто типизированного плюс:
+   \begin{align*}
+   & \Gamma \vdash \Lambda x. M: \forall X. \sigma,\quad \Gamma \cup \{x\} \vdash M : \sigma\\
+   & \Gamma \vdash M [\sigma] : \tau[x := \sigma],\quad \Gamma \vdash M : \forall x. \tau
+   \end{align*}
+\end{itemize}
+
+Введение абстракции по типам позволяет строить утверждения о программах\cite{theorems-for-free}.
+Например, существует ровно один терм с типом \(\forall a. \forall b. a \rightarrow b \rightarrow a\) ---
+\(\Lambda a. \Lambda b. \lambda x. \lambda y. x\).
+
 \subsection{Зависимые типы}
