@@ -154,7 +154,39 @@
 
 \subsection{Механизм сопоставления с образцом}
 
-TODO: Из \cite{proving-properties-of-programs-by-structural-induction}.
+В 1968-м году Бурсталл\cite{proving-properties-of-programs-by-structural-induction}
+предложил синтаксическую конструкцию, которая позволяет избавиться от явного написания
+предикатов с декструкторами, заменив их соответствующими конструкторами:
+\begin{align*}
+&\mathbf{let}\ lst = cons\ x\ xs &\Leftrightarrow &\quad\mathbf{let}\ lst = cons\ x\ xs\\
+&\mathbf{let}\ (cons\ x\ xs) = lst &\Leftrightarrow
+   &\quad\mathbf{let}\ x = head\ lst; \mathbf{let}\ xs = tail\ lst\\
+&lst\ \mathbf{is}\ nil &\Leftrightarrow &\quad isnil\ lst
+\end{align*}
+И развивая идею чуть дальше, заменять конструкции вида:
+\begin{align*}
+&\mathbf{if}\ &&e\ \mathbf{is}\ c_1\ \mathbf{then\ let}\ (c_1\ x_1\ \dots\ x_{k_1}) = e;
+   \phi_1\ x_1\ \dots\ x_{k_1}\\
+&\mathbf{else\ if}\ &&e\ \mathbf{is}\ c_2\ \mathbf{then\ let}\ (c_2\ x_1\ \dots\ x_{k_2}) = e;
+   \phi_2\ x_1\ \dots\ x_{k_2}\\
+&&&\vdots\\
+&\mathbf{else\ if}\ &&e\ \mathbf{is}\ c_n\ \mathbf{then\ let}\ (c_n\ x_1\ \dots\ x_{k_n}) = e;
+   \phi_n\ x_1\ \dots\ x_{k_n}
+\end{align*}
+
+конструкцией
+
+\begin{align*}
+&\mathbf{cases}\ e:\\
+&\quad c_1\ x_1\ \dots\ x_{k_1}: \phi_1\ x_1\ \dots\ x_{k_1}\\
+&\quad c_2\ x_1\ \dots\ x_{k_2}: \phi_2\ x_1\ \dots\ x_{k_2}\\
+&\quad\vdots\\
+&\quad c_n\ x_1\ \dots\ x_{k_n}: \phi_n\ x_1\ \dots\ x_{k_n}
+\end{align*}
+
+Механизм, названный позднее сопоставлением с образцом, оказался очень
+практически удобным и получил широкое распространение в языках
+вроде ML, Haskell, \dots.
 
 \subsection{Алгебраические типы данных}
 
