@@ -2,7 +2,132 @@
 
 \subsection{Расширение лямбда-исчисления дополнительными типами данных}
 
-TODO: Из \cite{tapl}.
+Чтобы превратить лямбда-исчисление в практический язык программирования,
+требуется ввести дополнительные типы данных, такие как числа, списки, \dots.
+Здесь будем рассматривать System F.
+
+Посмотрим, как можно ввести типы \(Bool\), \(Nat\) и \(List\)\cite{tapl}:
+\begin{itemize}
+\item Расширяем множество типов типами \(Bool\), \(Nat\), \(List\ T\), где \(T \in Ty\).
+\item Расширяем множество термов термами \(true\), \(false\), \(ifThenElse\),
+   \(0\), \(succ\), \(pred\), \(iszero\),
+   \(nil\), \(cons\), \(isnil\), \(head\), \(tail\).
+\item Дополняем правила типизации:
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash true : Bool\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash false : Bool\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash e : Bool\)}
+   \AxiomC{\(\Gamma \vdash t : T\)}
+   \AxiomC{\(\Gamma \vdash f : T\)}
+   \TrinaryInfC{\(\Gamma \vdash ifThenElse\ e\ t\ f : T\)}
+   \end{prooftree}
+
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash 0 : Nat\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash n : Nat\)}
+   \UnaryInfC{\(\Gamma \vdash succ\ n : Nat\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash n : Nat\)}
+   \UnaryInfC{\(\Gamma \vdash pred\ n : Nat\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash n : Nat\)}
+   \UnaryInfC{\(\Gamma \vdash iszero\ n : Bool\)}
+   \end{prooftree}
+
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash nil [T] : List\ T\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash x : T\)}
+   \AxiomC{\(\Gamma \vdash xs : List\ T\)}
+   \BinaryInfC{\(\Gamma \vdash cons [T]\ x\ xs : List\ T\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash xs : List\ T\)}
+   \UnaryInfC{\(\Gamma \vdash isnil [T]\ xs : Bool\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash xs : List\ T\)}
+   \UnaryInfC{\(\Gamma \vdash head [T]\ xs : T\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash xs : List\ T\)}
+   \UnaryInfC{\(\Gamma \vdash tail [T]\ xs : List\ T\)}
+   \end{prooftree}
+\item И расширяем правила вычислений. Назовем их дельта-редукциями:
+   \begin{prooftree}
+   \AxiomC{\(e \Rightarrow e'\)}
+   \UnaryInfC{\(ifThenElse\ e\ t\ f \Rightarrow ifThenElse\ e'\ t\ f\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(t \Rightarrow t'\)}
+   \UnaryInfC{\(ifThenElse\ true\ t\ f \Rightarrow t'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(f \Rightarrow f'\)}
+   \UnaryInfC{\(ifThenElse\ false\ t\ f \Rightarrow f'\)}
+   \end{prooftree}
+
+   \begin{prooftree}
+   \AxiomC{\(n \Rightarrow n'\)}
+   \UnaryInfC{\(succ\ n \Rightarrow succ\ n'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(n \Rightarrow n'\)}
+   \UnaryInfC{\(pred\ n \Rightarrow pred\ n'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(pred\ (succ\ n) \Rightarrow n\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(n \Rightarrow n'\)}
+   \UnaryInfC{\(iszero\ n \Rightarrow iszero\ n'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(iszero\ 0 \Rightarrow true\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(iszero\ (succ\ n) \Rightarrow false\)}
+   \end{prooftree}
+
+   \begin{prooftree}
+   \AxiomC{\(x \Rightarrow x'\)}
+   \AxiomC{\(xs \Rightarrow xs'\)}
+   \BinaryInfC{\(cons [T]\ x\ xs \Rightarrow cons [T]\ x'\ xs'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(xs \Rightarrow xs'\)}
+   \UnaryInfC{\(isnil [T]\ xs \Rightarrow isnil [T]\ xs'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(isnil [S]\ (nil [T]) \Rightarrow true\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(isnil [S]\ (cons [T]\ x\ xs) \Rightarrow false\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(xs \Rightarrow xs'\)}
+   \UnaryInfC{\(head [T]\ xs \Rightarrow head [T]\ xs'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(head [S]\ (cons [T]\ x\ xs) \Rightarrow x\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(xs \Rightarrow xs'\)}
+   \UnaryInfC{\(tail [T]\ xs \Rightarrow tail [T]\ xs'\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(tail [S]\ (cons [T]\ x\ xs) \Rightarrow xs\)}
+   \end{prooftree}
+\end{itemize}
 
 \subsection{Механизм сопоставления с образцом}
 
