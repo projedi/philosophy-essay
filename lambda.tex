@@ -65,13 +65,20 @@
    \right.
    \]
 \item Правила присваивания типов:
-   \begin{align*}
-   &\Gamma \vdash x : \sigma,\quad (x : \sigma) \in \Gamma\\
-   &\Gamma \vdash M N : \sigma,\quad \Gamma \vdash M : \tau \rightarrow \sigma,
-      \Gamma \vdash N : \tau\\
-   &\Gamma \vdash (\lambda x : \sigma. M) : \sigma \rightarrow \tau,\quad
-      (\Gamma \cup (x : \sigma)) \vdash M : \tau
-   \end{align*}
+   \begin{prooftree}
+   \AxiomC{}
+   \RightLabel{\(\quad(x : \sigma) \in \Gamma\)}
+   \UnaryInfC{\(\Gamma \vdash x : \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash M : \tau \rightarrow \sigma\)}
+   \AxiomC{\(\Gamma \vdash N : \tau\)}
+   \BinaryInfC{\(\Gamma \vdash M N : \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\((\Gamma \cup \{x : \sigma\}) \vdash M : \tau\)}
+   \UnaryInfC{\(\Gamma \vdash (\lambda x : \sigma. M) : \sigma \rightarrow \tau\)}
+   \end{prooftree}
 \item Вычисление выполняется также с помощью бэта-редукции, имеющему
    аналогичный вид нетипизированному случаю. Но определяется только
    для термов, которым можно присвоить тип.
@@ -108,10 +115,14 @@
    \right.
    \]
 \item Типизация. Все правила из просто типизированного плюс:
-   \begin{align*}
-   & \Gamma \vdash \Lambda x. M: \forall X. \sigma,\quad \Gamma \cup \{x\} \vdash M : \sigma\\
-   & \Gamma \vdash M [\sigma] : \tau[x := \sigma],\quad \Gamma \vdash M : \forall x. \tau
-   \end{align*}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \cup \{x\} \vdash M : \sigma\)}
+   \UnaryInfC{\(\Gamma \vdash \Lambda x. M: \forall X. \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash M : \forall x. \tau\)}
+   \UnaryInfC{\(\Gamma \vdash M [\sigma] : \tau[x := \sigma]\)}
+   \end{prooftree}
 \end{itemize}
 
 Введение абстракции по типам позволяет строить утверждения о программах \cite{theorems-for-free}.
