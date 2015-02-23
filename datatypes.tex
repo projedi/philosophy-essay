@@ -190,7 +190,25 @@
 
 \subsection{Алгебраические типы данных}
 
-TODO: Из \cite{transformation-system-for-developing-recursive-programs}.
+Встроенных в систему типов бывает недостаточно и хочется иметь
+возможность вводить собственные типы данных. Это можно делать, явно
+предоставляя функции преобразования между новым введенным типом и
+комбинацией встроенных
+\cite{transformation-system-for-developing-recursive-programs}.
+Это позволяет писать функции в терминах нового типа и дает возможность
+изменить внутреннее представление этого типа, не переписывая эти функции.
+
+Но от ручного написания функций преобразования тоже хочется избавиться,
+что было впервые сделано в 1980-м году в языке Hope
+\cite{hope-an-experimental-applicative-language}.
+В нем был введен способ вводить пользовательские типы данных, которые имеют форму деревьев.
+Например, \(Bool\), \(Nat\), \(List\ T\) принимают вид:
+\begin{align*}
+&\mathbf{data}\ Bool == true \doubleplus false\\
+&\mathbf{data}\ Nat == 0 \doubleplus succ(Nat)\\
+&\mathbf{typevar}\ T\\
+&\mathbf{data}\ List(T) == nil \doubleplus cons(T \# List(T))
+\end{align*}
 
 \subsection{Зависимые индуктивные типы данных}
 
