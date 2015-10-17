@@ -1,0 +1,128 @@
+\subsubsection{Нетипизированное лямбда-исчисление}
+
+Лямбда-исчисление Чёрча, наряду с машинами Тьюринга и общерекурсивными функциями
+Гёделя, задает множество эффективно вычислимых функций \cite{lambda-calculus-syntax-and-semantics}.
+То есть функций, для вычисления которых существует алгоритм. Это, в свою очередь,
+означает, что любая программа, исполняемая на современных вычислительных устройствах,
+должна быть выразима на языке лямбда-исчисления. Формально этот язык задается следующим образом
+\cite{lambda-calculus-syntax-and-semantics}:
+\begin{itemize}
+\item Есть некоторое множество \textit{переменных} \(V\).
+\item Есть множество \textit{термов} \(T\), задаваемых индуктивно:
+   \[
+   T = \left\{
+   \begin{array}{lrr}
+   x,\quad& x \in V\quad&\text{переменная}\\
+   M\ N,\quad& M, N \in T\quad&\text{применение}\\
+   \lambda x. M,\quad& x \in V, M \in T\quad&\text{лямбда-абстракция}
+   \end{array}
+   \right.
+   \]
+\item Множеством свободных переменных терма \(t\) называется подмножество \(V\),
+   в которое входят все переменные в терме \(t\), кроме тех, что связаны
+   лямбда-абстракцией (определение аналогично для других связывающих
+   конструкций в математике, к примеру, кванторов существования и всеобщности):
+   \begin{align*}
+   FV(x) &= \{x\}\\
+   FV(M N) &= FV(M) \cup FV(N)\\
+   FV(\lambda x. M) &= FV(M) \setminus \{x\}
+   \end{align*}
+\item Вычисление выполняется с помощью правила бэта-редукции:
+   \[
+   (\lambda x. M) N \Rightarrow_\beta M[x := N]
+   \]
+   Где нотация \(M[x := N]\) означает замену в \(M\) всех свободных вхождений переменной
+   \(x\) на терм \(N\).
+\end{itemize}
+
+\subsubsection{Просто типизированное лямбда-исчисление}
+
+Недостаток нетипизированного лямбда-исчисления лежит во <<вседозволенности>>
+операции применения \(M N\): ничто не гарантирует, что \(M\) будет функцией.
+Чтобы решить эту проблему, Чёрч разработал просто типизированное лямбда-исчисление
+\cite{lambda-calculi-with-types}:
+\begin{itemize}
+\item Множество переменных на уровне термов \(V\) и на уровне типов \(TyV\).
+\item Множество типов \(Ty\):
+   \[
+   Ty = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in TyV\\
+   \sigma \rightarrow \tau,\quad& \sigma, \tau \in Ty
+   \end{array}
+   \right.
+   \]
+\item Множество термов \(T\):
+   \[
+   T = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in V\\
+   M\ N,\quad& M, N \in T\\
+   \lambda x : \sigma. M,\quad& x \in V, \sigma \in Ty, M \in T
+   \end{array}
+   \right.
+   \]
+\item Правила присваивания типов:
+   \begin{prooftree}
+   \AxiomC{}
+   \RightLabel{\(\quad(x : \sigma) \in \Gamma\)}
+   \UnaryInfC{\(\Gamma \vdash x : \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash M : \tau \rightarrow \sigma\)}
+   \AxiomC{\(\Gamma \vdash N : \tau\)}
+   \BinaryInfC{\(\Gamma \vdash M N : \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\((\Gamma \cup \{x : \sigma\}) \vdash M : \tau\)}
+   \UnaryInfC{\(\Gamma \vdash (\lambda x : \sigma. M) : \sigma \rightarrow \tau\)}
+   \end{prooftree}
+\item Вычисление выполняется также с помощью бэта-редукции, имеющему
+   аналогичный вид нетипизированному случаю. Но определяется только
+   для термов, которым можно присвоить тип.
+\end{itemize}
+
+\subsubsection{Другие способы типизирования}
+
+Недостаток просто типизированного лямбда-исчисления обратный: множество термов,
+которые хотелось бы написать будут отвергнуты системой типов. Поэтому было придумано
+множество способов расширить систему типов, чтобы с одной стороны позволить писать
+больше программ, которые хочется, а с другой --- отвергать некорректные. Одной из
+таких систем типов является System F Жирара \cite{tapl}:
+\begin{itemize}
+\item Типы
+   \[
+   Ty = \left\{
+   \begin{array}{lr}
+   x,\quad& x \in TyV\\
+   \sigma \rightarrow \tau,\quad& \sigma \in Ty, \tau \in Ty\\
+   \forall x. \sigma,\quad& x \in TyV, \sigma \in Ty
+   \end{array}
+   \right.
+   \]
+\item Термы
+   \[
+   T = \left\{
+   \begin{array}{lrr}
+   x,\quad& x \in V&\\
+   M\ N,\quad& M, N \in T&\\
+   \lambda x : \sigma. M,\quad& x \in V, \sigma \in Ty, M \in T&\\
+   \Lambda x. M,\quad& X \in TyV, M \in T\quad&\text{абстракция по типу}\\
+   M [\sigma],\quad& M \in T, \sigma \in Ty\quad&\text{применение типа}
+   \end{array}
+   \right.
+   \]
+\item Типизация. Все правила из просто типизированного плюс:
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \cup \{x\} \vdash M : \sigma\)}
+   \UnaryInfC{\(\Gamma \vdash \Lambda x. M: \forall X. \sigma\)}
+   \end{prooftree}
+   \begin{prooftree}
+   \AxiomC{\(\Gamma \vdash M : \forall x. \tau\)}
+   \UnaryInfC{\(\Gamma \vdash M [\sigma] : \tau[x := \sigma]\)}
+   \end{prooftree}
+\end{itemize}
+
+Введение абстракции по типам позволяет строить утверждения о программах \cite{theorems-for-free}.
+Например, существует ровно один терм с типом \(\forall a. \forall b. a \rightarrow b \rightarrow a\) ---
+\(\Lambda a. \Lambda b. \lambda x. \lambda y. x\).
