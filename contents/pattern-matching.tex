@@ -1,14 +1,11 @@
 \subsubsection{Расширение лямбда-исчисления дополнительными типами данных}
 
-Чтобы превратить лямбда-исчисление в практический язык программирования,
-требуется ввести дополнительные типы данных, такие как числа, списки, \dots.
-Здесь будем рассматривать System F.
-
-Посмотрим, как можно ввести типы \(Bool\), \(Nat\) и \(List\) \cite{tapl}:
+Чтобы превратить System F в практический язык программирования,
+требуется ввести дополнительные типы данных, например \(Bool\)
+и \(List\) \cite{tapl}:
 \begin{itemize}
-\item Расширяем множество типов типами \(Bool\), \(Nat\), \(List\ T\), где \(T \in Ty\).
+\item Расширяем множество типов типами \(Bool\), \(List\ T\), где \(T \in Ty\).
 \item Расширяем множество термов термами \(true\), \(false\), \(ifThenElse\),
-   \(0\), \(succ\), \(pred\), \(iszero\),
    \(nil\), \(cons\), \(isnil\), \(head\), \(tail\).
 \item Дополняем правила типизации:
    \begin{prooftree}
@@ -22,22 +19,6 @@
    \AxiomC{\(\Gamma \vdash t : T\)}
    \AxiomC{\(\Gamma \vdash f : T\)}
    \TrinaryInfC{\(\Gamma \vdash ifThenElse\ e\ t\ f : T\)}
-   \end{prooftree}
-
-   \begin{prooftree}
-   \AxiomC{\(\Gamma \vdash 0 : Nat\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(\Gamma \vdash n : Nat\)}
-   \UnaryInfC{\(\Gamma \vdash succ\ n : Nat\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(\Gamma \vdash n : Nat\)}
-   \UnaryInfC{\(\Gamma \vdash pred\ n : Nat\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(\Gamma \vdash n : Nat\)}
-   \UnaryInfC{\(\Gamma \vdash iszero\ n : Bool\)}
    \end{prooftree}
 
    \begin{prooftree}
@@ -75,28 +56,6 @@
    \end{prooftree}
 
    \begin{prooftree}
-   \AxiomC{\(n \Rightarrow n'\)}
-   \UnaryInfC{\(succ\ n \Rightarrow succ\ n'\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(n \Rightarrow n'\)}
-   \UnaryInfC{\(pred\ n \Rightarrow pred\ n'\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(pred\ (succ\ n) \Rightarrow n\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(n \Rightarrow n'\)}
-   \UnaryInfC{\(iszero\ n \Rightarrow iszero\ n'\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(iszero\ 0 \Rightarrow true\)}
-   \end{prooftree}
-   \begin{prooftree}
-   \AxiomC{\(iszero\ (succ\ n) \Rightarrow false\)}
-   \end{prooftree}
-
-   \begin{prooftree}
    \AxiomC{\(x \Rightarrow x'\)}
    \AxiomC{\(xs \Rightarrow xs'\)}
    \BinaryInfC{\(cons [T]\ x\ xs \Rightarrow cons [T]\ x'\ xs'\)}
@@ -127,18 +86,18 @@
    \end{prooftree}
 \end{itemize}
 
-Можно заметить, что введение типа в систему состоит из шагов:
+Можно заметить, что введение типа в систему состоит из шагов\label{introducing-type}:
 \begin{enumerate}
-\item Введение типа на уровень типов: \(Bool\), \(Nat\), \(List\ T\).
+\item Введение типа на уровень типов: \(Bool\), \(List\ T\).
 \item Введение конструкторов --- функций (или, в частном
    случае, констант), которые дают на выходе элемент
-   введенного типа: \(true\), \(false\), \(0\), \(succ\), \(nil\), \(cons\).
+   введенного типа: \(true\), \(false\), \(nil\), \(cons\).
 \item Введение предикатов, которые проверяют каким конструктором
-   был построен аргумент: \(iszero\), \(isnil\).
+   был построен аргумент: \(isnil\).
 \item Введение деструкторов --- функций, действующих обратно
    конструкторам, то есть получая на вход элемент вводимого типа,
    они возвращают аргумент соответствующего конструктора:
-   \(pred\), \(head\), \(tail\)
+   \(head\), \(tail\)
 \end{enumerate}
 
 Последние 2 этапа можно объединить в один элиминатор, как в случае с \(Bool\):
@@ -182,6 +141,7 @@
 &\quad c_n\ x_1\ \dots\ x_{k_n}: \phi_n\ x_1\ \dots\ x_{k_n}
 \end{align*}
 
-Механизм, названный позднее сопоставлением с образцом, оказался очень
-практически удобным и получил широкое распространение в языках
-вроде ML, Haskell, \dots.
+Механизм, названный позднее сопоставлением с образцом получил реализацию в
+функциональных языках ML и Haskell. Там он оказался практически
+удобным и, обретя популярность, начал появляться в новых языках программирования,
+например, Rust и Swift.
