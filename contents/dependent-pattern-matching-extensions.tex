@@ -5,15 +5,15 @@
 В \cite{views} Уодлер представляет способ создавать различные виды для
 типов данных, чтобы затем выполнять сопоставление с образцом по виду. Таким
 образом, выполняя весь анализ в левой части уравнения, а в правой оставляя только
-результат. В частности:
+результат. Пример добавления вида для встоенного типа \(int\):
 \begin{align*}
-&view\ int ::= Zero\ |\ Even\ int\ |\ Odd\ int\\
-&\quad in\ n = Zero,\quad if\ n = 0\\
+&\mathbf{view}\ int ::= Zero\ |\ Even\ int\ |\ Odd\ int\\
+&\quad \mathbf{in}\ n = Zero,\quad if\ n = 0\\
 &\qquad = Even\ (n\ div\ 2),\quad if\ n > 0 \land n\ mod\ 2 = 0\\
 &\qquad = Odd\ ((n - 1)\ div\ 2),\quad if\ n > 0 \land n\ mod\ 2 = 1\\
-&\quad out\ Zero = 0\\
-&\quad out\ (Even\ n) = 2 * n,\quad if\ 2 * n > 0\\
-&\quad out\ (Odd\ n) = 2 * n + 1,\quad if\ 2 * n + 1 > 0\\
+&\quad \mathbf{out}\ Zero = 0\\
+&\quad \mathbf{out}\ (Even\ n) = 2 * n,\quad if\ 2 * n > 0\\
+&\quad \mathbf{out}\ (Odd\ n) = 2 * n + 1,\quad if\ 2 * n + 1 > 0\\
 \\
 &power\ x\ Zero = 1\\
 &power\ x\ (Even\ n) = power\ (x * x)\ n\\
@@ -22,39 +22,47 @@
 
 В языке Haskell используется похожий механизм, но дополнительная структура с
 описанием вида не создается --- вместо нее функции:
+
 \begin{align*}
+&even :: Int \to Maybe\ Int\\
 &even\ n\\
 &|\ n > 0\\
 &,\ n\ `mod`\ 2 == 0 = Just\ (n\ `div`\ 2)\\
+&|\ otherwise = Nothing\\
 \\
+&odd :: Int \to Maybe\ Int\\
 &odd\ n\\
 &|\ n > 0\\
 &,\ n\ `mod`\ 2 == 1 = Just\ ((n - 1)\ `div`\ 2)\\
+&|\ otherwise = Nothing\\
 \\
+&power :: Int \to Int \to Int\\
 &power\ x\ 0 = 1\\
 &power\ x\ n\\
 &|\ Just\ k \leftarrow even\ n = power\ (x * x)\ k\\
 &|\ Just\ k \leftarrow odd\ n = x * power\ (x * x)\ k
 \end{align*}
 
-Расширение этого механизма для зависимых типов рассматривается в
+Расширение механизма для зависимых типов рассматривается в
 \cite{the-view-from-the-left}. По аналогии с тем, как
 изменяется сопоставление с образцом при наличии зависимых типов,
 изменяется и механизм видов. А именно, он уточняет контекст.
 
-В частности:
+Реализация примера на языке Agda:
+
 \begin{align*}
-&data\ Parity\ (n : Nat) : Set\ where\\
+&\mathbf{data}\ Parity\ (n : Nat) : Set\ \mathbf{where}\\
 &\quad even : (k : Nat) \to Parity\ (2 * k)\\
 &\quad odd : (k : Nat) \to Parity\ (1 + 2 * k)\\
 \\
 &parity : (n : Nat) \to Parity n\\
 &parity\ 0 = even\ 0\\
 &parity\ 1 = odd\ 0\\
-&parity\ (succ\ (succ\ n))\ with\ parity\ n\\
+&parity\ (succ\ (succ\ n))\ \mathbf{with}\ parity\ n\\
 &parity\ .\_\ |\ even\ k = even\ (succ\ k)\\
 &parity\ .\_\ |\ odd\ k = odd\ (succ\ k)\\
 \\
+&power : Nat \to Nat \to Nat\\
 &power\ x\ 0 = 1\\
 &power\ x\ n\ with\ parity\ n\\
 &power\ x\ .(2 * k)\ |\ even\ k = power\ (x * x)\ k\\
@@ -64,7 +72,7 @@
 Помимо уточнения контекста наличие индуктивных семейств позволяет
 задавать виды, корректные по построению. В \cite{views} отсутствие
 мощной системы типов заставляет полагаться на совесть программиста:
-при задании вида \(in\) и \(out\) должны быть взаимообратны.
+при задании вида \(\mathbf{in}\) и \(\mathbf{out}\) должны быть взаимообратны.
 
 \subsubsection{Механизм <<smartcase>>}
 
